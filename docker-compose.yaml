@@ -3,6 +3,7 @@ services:
 
     redis:
         image: redis
+<<<<<<< HEAD
         hostname: redis
         container_name: redis
 
@@ -10,11 +11,21 @@ services:
         build: .
         #  command: python manage.py runserver 0.0.0.0:8000
         command:  uwsgi --ini uwsgi.ini
+=======
+
+
+    web:
+        build: .
+        command: python manage.py runserver 0.0.0.0:8000
+>>>>>>> 843f5e224a14f83d0229f180820f9b14742cc467
         volumes:
         - .:/code
         ports:
         - "8000:8000"
         links:
             - redis:redis  
+<<<<<<< HEAD
         restart: always 
     
+=======
+>>>>>>> 843f5e224a14f83d0229f180820f9b14742cc467
