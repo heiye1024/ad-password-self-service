@@ -5,6 +5,9 @@ from ldap3.utils.dn import safe_dn
 
 from pwdselfservice.local_settings import *
 
+
+
+
 """
 根据以下网站的说明：
 https://docs.microsoft.com/zh-cn/troubleshoot/windows/win32/change-windows-active-directory-user-password
@@ -64,11 +67,13 @@ class AdOps(object):
         """
         try:
             server = Server(host='%s' % AD_HOST, use_ssl=self.use_ssl, port=self.port, get_info=ALL)
+            print(server)
             c_auth = Connection(server=server, user=r'{}\{}'.format(self.domain, username), password=password, auto_bind=True, raise_exceptions=True)
             c_auth.unbind()
             return True, '旧密码验证通过。'
         except LDAPInvalidCredentialsResult as e:
             if '52e' in e.message:
+                print(e.message)
                 return False, u'账号或旧密码不正确！'
             elif '775' in e.message:
                 return False, u'账号已锁定，请自行扫码解锁！'
@@ -99,7 +104,7 @@ class AdOps(object):
         base_dn = BASE_DN
         condition = '(&(objectclass=user)(sAMAccountName={}))'.format(username)
         attributes = ['sAMAccountName']
-        return self.conn.search(base_dn, condition, attributes=attributes)
+        return self.conn.search(base_dn, condition, attributes=attributes, time_limit=30)
 
     def ad_get_user_displayname_by_account(self, username):
         """
